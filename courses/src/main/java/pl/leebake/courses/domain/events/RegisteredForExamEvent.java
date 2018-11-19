@@ -1,12 +1,17 @@
-package pl.leebake.courses.domain;
+package pl.leebake.courses.domain.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Builder
+@RequiredArgsConstructor(onConstructor_ = {@JsonCreator})
+@Getter
 public class RegisteredForExamEvent implements DomainEvent {
 
     public static final String TYPE = "student.registered-for-exam";

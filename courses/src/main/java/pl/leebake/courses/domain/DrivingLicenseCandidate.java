@@ -2,7 +2,9 @@ package pl.leebake.courses.domain;
 
 import io.vavr.API;
 import io.vavr.Predicates;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import pl.leebake.courses.domain.events.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -15,6 +17,7 @@ import static io.vavr.collection.List.ofAll;
 @RequiredArgsConstructor
 public class DrivingLicenseCandidate {
 
+    @Getter
     private final UUID uuid;
     private Person person;
     private Category category;
@@ -25,10 +28,11 @@ public class DrivingLicenseCandidate {
     private Instant licenseGrantedDate;
     private Instant licenseForbiddenDate;
 
-    private List<DomainEvent> pendingEvents = new ArrayList<>();
+    @Getter
+    private final List<DomainEvent> pendingEvents;
 
 
-    public void registerForCourse(final Person person, final Category category) {
+    public DrivingLicenseCandidate registerForCourse(final Person person, final Category category, final Instant when) {
         if (isUnderSeventeen(person)) {
             throw new IllegalStateException();
         }
@@ -44,10 +48,10 @@ public class DrivingLicenseCandidate {
         RegisteredForCourseEvent event = RegisteredForCourseEvent.builder()
                 .person(person)
                 .category(category)
-                .when(Instant.now())
+                .when(when)
                 .uuid(uuid)
                 .build();
-        handleWithAppend(event);
+        return handleWithAppend(event);
     }
 
     private boolean isLicenseForbidden() {
@@ -69,12 +73,12 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public void completeCourse(final Instant when) {
+    public DrivingLicenseCandidate completeCourse(final Instant when) {
         if (!isRegisteredForCourse()) {
             throw new IllegalStateException();
         }
         CourseCompletedEvent event = CourseCompletedEvent.builder().when(when).uuid(uuid).build();
-        handleWithAppend(event);
+        return handleWithAppend(event);
     }
 
     private DrivingLicenseCandidate courseCompleted(CourseCompletedEvent event) {
@@ -82,7 +86,7 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public void registerForExam(final Instant when) {
+    public DrivingLicenseCandidate registerForExam(final Instant when) {
         if (!isCourseCompleted()) {
             throw new IllegalStateException();
         }
@@ -93,7 +97,7 @@ public class DrivingLicenseCandidate {
             throw new IllegalStateException();
         }
         RegisteredForExamEvent event = RegisteredForExamEvent.builder().uuid(uuid).when(when).build();
-        handleWithAppend(event);
+        return handleWithAppend(event);
     }
 
     private boolean isUnderEighteen() {
@@ -105,7 +109,7 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public void grantLicense() {
+    public DrivingLicenseCandidate grantLicense() {
         if (!isCourseCompleted()) {
             throw new IllegalStateException();
         }
@@ -113,7 +117,7 @@ public class DrivingLicenseCandidate {
             throw new IllegalStateException();
         }
         final LicenseGrantedEvent event = LicenseGrantedEvent.builder().uuid(this.uuid).when(Instant.now()).build();
-        handleWithAppend(event);
+        return handleWithAppend(event);
     }
 
     private DrivingLicenseCandidate licenseGranted(LicenseGrantedEvent event) {
@@ -121,9 +125,9 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public void forbidLicense() {
+    public DrivingLicenseCandidate forbidLicense() {
         final LicenseForbiddenEvent event = LicenseForbiddenEvent.builder().uuid(uuid).when(Instant.now()).build();
-        handleWithAppend(event);
+        return handleWithAppend(event);
     }
 
     private DrivingLicenseCandidate licenseForbidden(LicenseForbiddenEvent event) {
@@ -163,6 +167,10 @@ public class DrivingLicenseCandidate {
     }
 
     public static DrivingLicenseCandidate from(UUID uuid, List<DomainEvent> domainEvents) {
-        return ofAll(domainEvents).foldLeft(new DrivingLicenseCandidate(uuid), DrivingLicenseCandidate::handle);
+        return ofAll(domainEvents).foldLeft(new DrivingLicenseCandidate(uuid, new ArrayList<>()), DrivingLicenseCandidate::handle);
+    }
+
+    public DrivingLicenseCandidate markChangesAsCommited() {
+        return new DrivingLicenseCandidate(uuid, Collections.emptyList());
     }
 }

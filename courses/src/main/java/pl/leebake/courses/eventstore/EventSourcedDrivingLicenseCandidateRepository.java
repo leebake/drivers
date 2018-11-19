@@ -1,12 +1,12 @@
-package pl.leebake.violations.eventstore;
+package pl.leebake.courses.eventstore;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import pl.leebake.courses.domain.events.DomainEvent;
+import pl.leebake.courses.domain.DrivingLicenseCandidate;
+import pl.leebake.courses.domain.DrivingLicenseCandidateRepository;
 import pl.leebake.event.store.EventDescriptor;
 import pl.leebake.event.store.EventStore;
-import pl.leebake.violations.domain.Violation;
-import pl.leebake.violations.domain.ViolationRepository;
-import pl.leebake.violations.domain.events.DomainEvent;
 
 import java.time.Instant;
 import java.util.List;
@@ -17,13 +17,13 @@ import static java.util.stream.Collectors.toList;
 
 @Component
 @RequiredArgsConstructor
-public class EventSourcedViolationRepository implements ViolationRepository {
+public class EventSourcedDrivingLicenseCandidateRepository implements DrivingLicenseCandidateRepository {
 
     private final EventStore eventStore;
     private final EventSerializer eventSerializer;
 
     @Override
-    public Violation save(Violation aggregate) {
+    public DrivingLicenseCandidate save(DrivingLicenseCandidate aggregate) {
         List<EventDescriptor> events = aggregate.getPendingEvents()
                 .stream()
                 .map(eventSerializer::serialize)
@@ -33,13 +33,13 @@ public class EventSourcedViolationRepository implements ViolationRepository {
     }
 
     @Override
-    public Violation getByUUID(UUID uuid) {
-        return Violation.from(uuid, getRelatedEvents(uuid));
+    public DrivingLicenseCandidate getByUUID(UUID uuid) {
+        return DrivingLicenseCandidate.from(uuid, getRelatedEvents(uuid));
     }
 
     @Override
-    public Violation getByUUIDAt(UUID uuid, Instant at) {
-        return Violation.from(uuid,
+    public DrivingLicenseCandidate getByUUIDAt(UUID uuid, Instant at) {
+        return DrivingLicenseCandidate.from(uuid,
                 getRelatedEvents(uuid)
                         .stream()
                         .filter(event -> !event.when().isAfter(at))

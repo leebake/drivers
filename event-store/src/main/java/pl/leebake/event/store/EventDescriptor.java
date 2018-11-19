@@ -1,4 +1,4 @@
-package pl.leebake.violations.eventstore;
+package pl.leebake.event.store;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import java.time.Instant;
 @Entity(name = "event_descriptors")
 @NoArgsConstructor
 @Getter
-class EventDescriptor {
+public class EventDescriptor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,7 +24,7 @@ class EventDescriptor {
     @Column(nullable = false, length = 60)
     private String type;
 
-    EventDescriptor(String body, Instant occurredAt, String type) {
+    public EventDescriptor(String body, Instant occurredAt, String type) {
         this.body = body;
         this.occurredAt = occurredAt;
         this.type = type;

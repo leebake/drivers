@@ -1,14 +1,19 @@
-package pl.leebake.courses.domain;
+package pl.leebake.courses.domain.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Builder
-public class CourseCompletedEvent implements DomainEvent {
-    public static final String TYPE = "course.completed";
+@RequiredArgsConstructor(onConstructor_ = {@JsonCreator})
+@Getter
+public class LicenseForbiddenEvent implements DomainEvent {
+    public static final String TYPE = "license.forbidden";
 
     @NonNull
     private final Instant when;

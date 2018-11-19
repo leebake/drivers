@@ -1,4 +1,4 @@
-package pl.leebake.violations.eventstore;
+package pl.leebake.courses.eventstore;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.stereotype.Component;
+import pl.leebake.courses.domain.events.DomainEvent;
 import pl.leebake.event.store.EventDescriptor;
-import pl.leebake.violations.domain.events.DomainEvent;
 
 import java.io.IOException;
 

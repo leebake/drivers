@@ -1,4 +1,4 @@
-package pl.leebake.violations.eventstore;
+package pl.leebake.event.store;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

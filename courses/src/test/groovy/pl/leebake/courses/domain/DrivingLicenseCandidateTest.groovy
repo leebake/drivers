@@ -1,5 +1,6 @@
 package pl.leebake.courses.domain
 
+import pl.leebake.courses.domain.events.DomainEvent
 import spock.lang.Specification
 
 import java.time.Instant
@@ -8,7 +9,7 @@ import java.time.temporal.ChronoUnit
 
 class DrivingLicenseCandidateTest extends Specification {
 
-    DrivingLicenseCandidate candidate = new DrivingLicenseCandidate(UUID.randomUUID())
+    DrivingLicenseCandidate candidate = new DrivingLicenseCandidate(UUID.randomUUID(), new ArrayList<DomainEvent>())
 
     def 'can register for course'() {
         given:
@@ -19,7 +20,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         when:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         then:
         candidate.isRegisteredForCourse()
@@ -34,7 +35,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         when:
         candidate.completeCourse(Instant.now())
@@ -52,7 +53,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         and:
         candidate.completeCourse(Instant.now().minus(1, ChronoUnit.DAYS))
@@ -73,7 +74,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         and:
         candidate.completeCourse(Instant.now().minus(1, ChronoUnit.DAYS))
@@ -97,7 +98,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         when:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         then:
         thrown(IllegalStateException)
@@ -111,7 +112,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .birthDate(LocalDate.now().minusYears(20))
                 .build()
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         and:
         candidate.completeCourse(Instant.now())
@@ -123,7 +124,7 @@ class DrivingLicenseCandidateTest extends Specification {
         candidate.grantLicense()
 
         when:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         then:
         thrown(IllegalStateException)
@@ -138,10 +139,10 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         when:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         then:
         thrown(IllegalStateException)
@@ -159,7 +160,7 @@ class DrivingLicenseCandidateTest extends Specification {
         candidate.forbidLicense()
 
         when:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         then:
         thrown(IllegalStateException)
@@ -190,7 +191,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         and:
         candidate.completeCourse(Instant.now().minus(1, ChronoUnit.DAYS))
@@ -211,7 +212,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         and:
         candidate.completeCourse(Instant.now().minus(1, ChronoUnit.DAYS))
@@ -235,7 +236,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         when:
         candidate.grantLicense()
@@ -253,7 +254,7 @@ class DrivingLicenseCandidateTest extends Specification {
                 .build()
 
         and:
-        candidate.registerForCourse(person, Category.B)
+        candidate.registerForCourse(person, Category.B, Instant.now())
 
         and:
         candidate.completeCourse(Instant.now())
