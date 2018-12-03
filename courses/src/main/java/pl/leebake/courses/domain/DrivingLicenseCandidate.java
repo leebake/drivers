@@ -32,7 +32,7 @@ public class DrivingLicenseCandidate {
     private final List<DomainEvent> pendingEvents;
 
 
-    public DrivingLicenseCandidate registerForCourse(final Person person, final Category category, final Instant when) {
+    DrivingLicenseCandidate registerForCourse(final Person person, final Category category, final Instant when) {
         if (isUnderSeventeen(person)) {
             throw new IllegalStateException();
         }
@@ -54,11 +54,11 @@ public class DrivingLicenseCandidate {
         return handleWithAppend(event);
     }
 
-    private boolean isLicenseForbidden() {
+    public boolean isLicenseForbidden() {
         return Optional.ofNullable(licenseForbiddenDate).isPresent();
     }
 
-    boolean isLicenseGranted() {
+    public boolean isLicenseGranted() {
         return Optional.ofNullable(licenseGrantedDate).isPresent();
     }
 
@@ -73,7 +73,7 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public DrivingLicenseCandidate completeCourse(final Instant when) {
+    DrivingLicenseCandidate completeCourse(final Instant when) {
         if (!isRegisteredForCourse()) {
             throw new IllegalStateException();
         }
@@ -86,7 +86,7 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public DrivingLicenseCandidate registerForExam(final Instant when) {
+    DrivingLicenseCandidate registerForExam(final Instant when) {
         if (!isCourseCompleted()) {
             throw new IllegalStateException();
         }
@@ -109,7 +109,7 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public DrivingLicenseCandidate grantLicense() {
+    DrivingLicenseCandidate grantLicense() {
         if (!isCourseCompleted()) {
             throw new IllegalStateException();
         }
@@ -125,7 +125,7 @@ public class DrivingLicenseCandidate {
         return this;
     }
 
-    public DrivingLicenseCandidate forbidLicense() {
+    DrivingLicenseCandidate forbidLicense() {
         final LicenseForbiddenEvent event = LicenseForbiddenEvent.builder().uuid(uuid).when(Instant.now()).build();
         return handleWithAppend(event);
     }
@@ -168,6 +168,10 @@ public class DrivingLicenseCandidate {
 
     public static DrivingLicenseCandidate from(UUID uuid, List<DomainEvent> domainEvents) {
         return ofAll(domainEvents).foldLeft(new DrivingLicenseCandidate(uuid, new ArrayList<>()), DrivingLicenseCandidate::handle);
+    }
+
+    static DrivingLicenseCandidate init() {
+        return from(UUID.randomUUID(), Collections.emptyList());
     }
 
     public DrivingLicenseCandidate markChangesAsCommited() {
